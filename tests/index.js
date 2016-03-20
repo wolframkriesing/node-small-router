@@ -47,15 +47,17 @@ describe('server', () => {
     });
 
     describe('/api/register/hedgehog/:id([a-z]+)', () => {
+        let route = '/api/register/hedgehog/';
+
         it('should return 200', (done) => {
-            http.get(`${SERVER_URL}/api/register/hedgehog/hii`, (res) => {
+            http.get(`${SERVER_URL}${route}hii`, (res) => {
                 res.statusCode.should.equal(200);
                 done();
             });
         });
 
         it('should return hii Hedgehog', (done) => {
-            http.get(`${SERVER_URL}/api/register/hedgehog/hii`, (res) => {
+            http.get(`${SERVER_URL}${route}hii`, (res) => {
                 let data = '';
                 res.on('data', (chunk) => {
                     data += chunk;
@@ -67,7 +69,7 @@ describe('server', () => {
         });
 
         it('should return test Hedgehog', (done) => {
-            http.get(`${SERVER_URL}/api/register/hedgehog/test`, (res) => {
+            http.get(`${SERVER_URL}${route}test`, (res) => {
                 let data = '';
                 res.on('data', (chunk) => {
                     data += chunk;
@@ -76,6 +78,27 @@ describe('server', () => {
                     done();
                 });
             });
+        });
+    });
+
+    describe('/api/moo', () => {
+        let route = '/api/moo';
+
+        it('should return 404', (done) => {
+            http.get(`${SERVER_URL}${route}`, (res) => {
+                res.statusCode.should.equal(404);
+                done();
+            });
+        });
+
+        it('should return Route /api/moo does not exist', (done) => {
+            http.get(`${SERVER_URL}${route}`, (res) => {
+                let data = '';
+                res.on('data', chunk => data += chunk).on('end', () => {
+                    data.should.equal('Route /api/moo does not exist');
+                    done();
+                });
+            })
         });
     });
 
