@@ -98,7 +98,7 @@ describe('server', () => {
                     data.should.equal('Route /api/moo does not exist');
                     done();
                 });
-            })
+            });
         });
     });
 
