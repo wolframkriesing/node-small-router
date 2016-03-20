@@ -50,7 +50,8 @@ module.exports = (http) => {
          * @param {string} path
          * @param {bool} overWrite
          */
-        addAssetPath(asset, path, overWrite = false) {
+        addAssetPath(asset, path, overWrite) {
+            overWrite = overWrite || false;
             let success = false;
 
             if((!this.assetPaths.hasOwnProperty(asset) && !overWrite) || overWrite) {

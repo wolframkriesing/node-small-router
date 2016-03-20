@@ -1,10 +1,10 @@
 {
   "name": "small-router",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Small router module that creates http server and runs routes that have been added on the api",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --harmony_default_parameters tests/index.js"
+    "test": "mocha tests/index.js"
   },
   "repository": {
     "type": "git",
