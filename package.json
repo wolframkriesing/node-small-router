@@ -1,0 +1,26 @@
+{
+  "name": "small-router",
+  "version": "0.0.1",
+  "description": "Small router module that creates http server and runs routes that have been added on the api",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --harmony_default_parameters tests/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SC7639/node-small-router.git"
+  },
+  "keywords": [
+    "router",
+    "small-router"
+  ],
+  "author": "SC7639",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "should": "^8.2.2"
+  },
+  "dependencies": {
+    "formidable": "^1.0.17"
+  }
+}
