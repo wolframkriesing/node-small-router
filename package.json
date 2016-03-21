@@ -1,6 +1,6 @@
 {
   "name": "small-router",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Small router module that creates http server and runs routes that have been added on the api",
   "main": "index.js",
   "scripts": {
