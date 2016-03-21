@@ -225,6 +225,7 @@ module.exports = (http) => {
          */
         parseURLParameter(urlPart, routePart) {
             let rtrn = false;
+            urlPart = urlPart || '';
 
             if(routePart.indexOf(':') === 0) {
                 let param = {};

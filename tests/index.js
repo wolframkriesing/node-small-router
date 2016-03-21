@@ -23,14 +23,14 @@ describe('server', () => {
     });
 
     describe('/', () => {
-        it('should return 200', (done) => {
+        it('should return 200 status code', (done) => {
             http.get(SERVER_URL, (res) => {
                 res.statusCode.should.equal(200);
                 done();
             });
         });
 
-        it('should return test text', (done) => {
+        it('should return test text response text', (done) => {
             http.get(SERVER_URL, (res) => {
                 let data = '';
 
@@ -47,17 +47,17 @@ describe('server', () => {
     });
 
     describe('/api/register/hedgehog/:id([a-z]+)', () => {
-        let route = '/api/register/hedgehog/';
+        let routeExists = '/api/register/hedgehog/';
 
-        it('should return 200', (done) => {
-            http.get(`${SERVER_URL}${route}hii`, (res) => {
+        it('should return 200 status code', (done) => {
+            http.get(`${SERVER_URL}${routeExists}hii`, (res) => {
                 res.statusCode.should.equal(200);
                 done();
             });
         });
 
-        it('should return hii Hedgehog', (done) => {
-            http.get(`${SERVER_URL}${route}hii`, (res) => {
+        it('should return hii Hedgehog response text', (done) => {
+            http.get(`${SERVER_URL}${routeExists}hii`, (res) => {
                 let data = '';
                 res.on('data', (chunk) => {
                     data += chunk;
@@ -68,8 +68,8 @@ describe('server', () => {
             });
         });
 
-        it('should return test Hedgehog', (done) => {
-            http.get(`${SERVER_URL}${route}test`, (res) => {
+        it('should return test Hedgehog response text', (done) => {
+            http.get(`${SERVER_URL}${routeExists}test`, (res) => {
                 let data = '';
                 res.on('data', (chunk) => {
                     data += chunk;
@@ -79,19 +79,38 @@ describe('server', () => {
                 });
             });
         });
+
+        let routeNotExist = '/api/register/hedgehog';
+
+        it('should return 404 status code', (done) => {
+            http.get(`${SERVER_URL}${routeNotExist}`, (res) => {
+                res.statusCode.should.equal(404);
+                done();
+            });
+        });
+
+        it('should return Route /api/register/hedgehog does not exist response text', (done) => {
+            http.get(`${SERVER_URL}${routeNotExist}`, (res) => {
+                let data = '';
+                res.on('data', chunk => data += chunk).on('end', () => {
+                    data.should.equal('Route /api/register/hedgehog does not exist');
+                    done();
+                });
+            });
+        });
     });
 
     describe('/api/moo', () => {
         let route = '/api/moo';
 
-        it('should return 404', (done) => {
+        it('should return 404 status code', (done) => {
             http.get(`${SERVER_URL}${route}`, (res) => {
                 res.statusCode.should.equal(404);
                 done();
             });
         });
 
-        it('should return Route /api/moo does not exist', (done) => {
+        it('should return Route /api/moo does not exist response text', (done) => {
             http.get(`${SERVER_URL}${route}`, (res) => {
                 let data = '';
                 res.on('data', chunk => data += chunk).on('end', () => {
