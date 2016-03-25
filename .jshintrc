@@ -5,6 +5,7 @@
         "describe": false,
         "it": false,
         "before": false,
-        "after": false
+        "after": false,
+        "expect": false
     }
 }

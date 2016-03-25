@@ -116,48 +116,59 @@ module.exports = (http) => {
                     this.routes[url](req, res, url);
                 }
                 else {
+                    let routeMatch = false;
                     Object.keys(this.routes).forEach((route) => { // For each route check url parts against for route parameter against url
-                        let routeParts = route.split('/');
+                        if(!routeMatch) {
+                            let routeParts = route.split('/');
+                            // console.log("Route Parts", routeParts);
+                            // console.log("URL Parts", urlParts);
 
-                        if(routeParts.length > 1) {
-                            let param;
-                            for (var i = 0; i < routeParts.length; i++) { // For each
-                                let part = routeParts[i];
+                            if(routeParts.length > 1) {
+                                let param;
+                                for (var i = 0; i < routeParts.length; i++) { // For each
+                                    let part = routeParts[i];
 
-                                if(part !== urlParts[i]) {
-                                    param = this.parseURLParameter(urlParts[i], part);
-                                    if(param) {
-                                        req.parameters = Object.assign(req.parameters || {}, param);
-                                    }
-                                    else {
-                                        break;
+                                    if(part !== urlParts[i] && routeParts.length === urlParts.length) {
+                                        param = this.parseURLParameter(urlParts[i], part);
+                                        if(param) {
+                                            req.parameters = Object.assign(req.parameters || {}, param);
+                                        }
+                                        else {
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-
-                            if(param) {
-                                this.routes[route](req, res, url);
-                            }
-                        }
-                        else {
-                            if(routeParts[0] == url) {
-                                this.routes[route](req, res, url);
-                            }
-                            else{
-                                let param = this.parseURLParameter(urlParts[0], routeParts[0]);
 
                                 if(param) {
-                                    req.parameters = Object.assign(req.parameters, param);
-                                    this.routes[route](req, res, url);
+                                    routeMatch = true;
+                                    return this.routes[route](req, res, url);
                                 }
-                                else {
-                                    return this.pageNotFound(res, url);
+                            }
+                            else if(routeParts.length === urlParts.length) {
+                                if(routeParts[0] == url) {
+                                    routeMatch = true;
+                                    return this.routes[route](req, res, url);
+                                }
+                                else{
+                                    let param = this.parseURLParameter(urlParts[0], routeParts[0]);
+
+                                    if(param) {
+                                        routeMatch = true;
+                                        req.parameters = Object.assign(req.parameters, param);
+                                        return this.routes[route](req, res, url);
+                                    }
+                                    else {
+                                        routeMatch = true;
+                                        return this.pageNotFound(res, url);
+                                    }
                                 }
                             }
                         }
                     });
 
-                    return this.pageNotFound(res, url);
+                    if(!routeMatch) {
+                        return this.pageNotFound(res, url);
+                    }
                 }
             }
         }
@@ -189,30 +200,18 @@ module.exports = (http) => {
         }
 
         parseData(req, cb) {
-            if(req.method == 'GET') {
-                let params = req.url.split('?')[1] || false;
-
-                if(params) {
-                    cb(
-                        null,
-                        querystring.parse(params)
-                    );
-                }
-                else {
-                    cb(null, {});
-                }
-            }
-            else if(req.method == 'POST') {
+            if(req.method == 'POST') {
                 let form = formidable.IncomingForm();
                 form.parse(req, (err, fields, files) => {
                     if(err) {
                         return cb(err);
                     }
 
-                    cb(err, {
-                        fields: fields,
-                        files: files
-                    });
+                    cb(
+                        err,
+                        fields,
+                        files
+                    );
                 });
             }
         }
