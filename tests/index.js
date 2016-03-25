@@ -154,7 +154,13 @@ describe('server', () => {
             http.get(`${SERVER_URL}${route}`, (res) => {
                 let data = '';
                 res.on('data', chunk => data += chunk).on('end', () => {
-                    data.should.equal(`html {\r\n    text-align: center;\r\n}\r\n`);
+                    if(/^win/.test(process.platform)) {
+                        data.should.equal(`html {\r\n    text-align: center;\r\n}\r\n`);
+                    }
+                    else {
+                        data.should.equal(`html {\n    text-align: center;\n}\n`);
+                    }
+
                     done();
                 });
             });
