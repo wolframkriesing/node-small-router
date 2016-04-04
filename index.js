@@ -90,10 +90,10 @@ module.exports = (http) => {
                 let assetType = urlParts[urlParts.length - 2];
 
                 if(assetPaths.indexOf(assetType) !== -1) { // If the asset has been speicified
-                    this.renderAsset(this.assetPaths[assetType], file, res);
+                    this.renderAsset(this.assetPaths[assetType], file, assetType, res);
                 }
                 else if(assetPaths.indexOf(fileType) !== -1) {
-                    this.renderAsset(this.assetPaths[fileType], file, res);
+                    this.renderAsset(this.assetPaths[fileType], file, fileType, res);
                 }
                 else {
                     let path = assetType;
@@ -108,7 +108,7 @@ module.exports = (http) => {
                         });
                     }
 
-                    this.renderAsset(path, file, res);
+                    this.renderAsset(path, file, path, res);
                 }
             }
             else {
@@ -186,13 +186,18 @@ module.exports = (http) => {
          * Responde with asset file contents to the http request
          * @param {string} path
          * @param {string} file
+         * @param {string} assetType
          * @param {Server.Response} res
          */
-        renderAsset(path, file, res) {
+        renderAsset(path, file, assetType res) {
             fs.readFile(`${path}/${file}`, (err, data) => {
                 if(err) {
                     res.statusCode = 404;
                     res.end(`File ${path}/${file} doesn't exist`);
+                }
+
+                if(assetType == 'css') {
+                    res.writeHead(200, { 'Content-Type': 'text/css' });
                 }
 
                 res.end(data);
