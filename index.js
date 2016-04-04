@@ -189,7 +189,7 @@ module.exports = (http) => {
          * @param {string} assetType
          * @param {Server.Response} res
          */
-        renderAsset(path, file, assetType res) {
+        renderAsset(path, file, assetType, res) {
             fs.readFile(`${path}/${file}`, (err, data) => {
                 if(err) {
                     res.statusCode = 404;
