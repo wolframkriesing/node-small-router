@@ -4,6 +4,7 @@ const should = require('should');
 const http = require('http');
 const router = require('../index')(http);
 const querystring = require('querystring');
+const fs = require('fs');
 
 const SERVER_URL = 'http://localhost:8000';
 
@@ -37,6 +38,8 @@ describe('server', () => {
                 res.end(`Parse form data ${fields.test}`);
             });
         });
+
+        router.addAssetPath('images', 'tests/images/');
 
         router.listen(8000);
     });
@@ -162,6 +165,33 @@ describe('server', () => {
                     }
 
                     done();
+                });
+            });
+        });
+    });
+
+    describe('/images/loader.gif', (parameters) => {
+        let route = 'images/loader.gif';
+
+        it('it should return 200 status code', (done) => {
+            http.get(`${SERVER_URL}/${route}`, (res) => {
+                res.statusCode.should.equal(200);
+                done();
+            });
+        });
+
+        it('it should return gif image file contents', (done) => {
+            http.get(`${SERVER_URL}/${route}`, (res) => {
+                let data = '';
+                res.on('data', chunk => data += chunk).on('end', () => {
+                    fs.readFile(`tests/${route}`, (err, data) => {
+                        if(err) {
+                            throw err;
+                        }
+
+                        data.should.equal(data);
+                        done();
+                    });
                 });
             });
         });
