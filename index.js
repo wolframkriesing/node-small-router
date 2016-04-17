@@ -88,7 +88,7 @@ module.exports = (http) => {
                 let fileType = url.split('.');
                 fileType = fileType[fileType.length - 1];
                 let file = url.replace('/', '');
-                let assetType = urlParts[urlParts.length - 2];
+                let assetType = urlParts[1];
 
                 if(assetPaths.indexOf(assetType) !== -1) { // If the asset has been speicified
                     if(file.indexOf(assetType) !== -1) {
