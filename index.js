@@ -85,7 +85,8 @@ module.exports = (http) => {
             let urlParts = url.split('/');
 
             if(url.includes('.')) { // If the url is for an asset
-                let fileType = url.split('.')[2] || url.split('.')[1];
+                let fileType = url.split('.');
+                fileType = fileType[fileType.length - 1];
                 let file = url.replace('/', '');
                 let assetType = urlParts[urlParts.length - 2];
 
@@ -100,7 +101,10 @@ module.exports = (http) => {
                 }
                 else {
                     let path = assetType;
-                    file = this.assetPaths[file].replace(`${path}/`, '');
+
+                    if(this.assetPaths.hasOwnProperty(fileType)) {
+                        file = this.assetPaths[file].replace(`${path}/`, '');
+                    }
 
                     this.renderAsset(path, file, path, res);
                 }
@@ -184,7 +188,7 @@ module.exports = (http) => {
          * @param {Server.Response} res
          */
         renderAsset(path, file, assetType, res) {
-            fs.readFile(`${path}/${file}`, (err, data) => {
+            fs.readFile(`${path}${file}`, (err, data) => {
                 if(err) {
                     res.statusCode = 404;
                     res.end(`File ${path}/${file} doesn't exist`);

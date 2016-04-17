@@ -40,6 +40,7 @@ describe('server', () => {
         });
 
         router.addAssetPath('images', 'tests/images/');
+        router.addAssetPath('js', 'tests/js/');
 
         router.listen(8000);
     });
@@ -170,7 +171,7 @@ describe('server', () => {
         });
     });
 
-    describe('/images/loader.gif', (parameters) => {
+    describe('/images/loader.gif', () => {
         let route = 'images/loader.gif';
 
         it('it should return 200 status code', (done) => {
@@ -185,6 +186,33 @@ describe('server', () => {
                 let data = '';
                 res.on('data', chunk => data += chunk).on('end', () => {
                     fs.readFile(`tests/${route}`, (err, data) => {
+                        if(err) {
+                            throw err;
+                        }
+
+                        data.should.equal(data);
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+    describe('/jspm_packages/github/capaj/systemjs-hot-reloader@0.5.7.js', () => {
+        let route = '/jspm_packages/github/capaj/systemjs-hot-reloader@0.5.7.js';
+
+        it('it should return 200 status code', (done) => {
+            http.get(`${SERVER_URL}/${route}`, (res) => {
+                res.statusCode.should.equal(200);
+                done();
+            });
+        });
+
+        it('it should return contents of systemjs-hot-reloader@0.5.7.js', (done) => {
+            http.get(`${SERVER_URL}/${route}`, (res) => {
+                let data = '';
+                res.on('data', chunk => data += chunk).on('end', () => {
+                    fs.readFile(`tests/js${route}`, (err, data) => {
                         if(err) {
                             throw err;
                         }
