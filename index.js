@@ -194,6 +194,9 @@ module.exports = (http) => {
                     res.end(`File ${path}/${file} doesn't exist`);
                 }
 
+                if(assetType == 'js') {
+                    res.writeHead(200, { 'Content-Type': 'text/javascript' });
+                }
 
                 if(assetType == 'css') {
                     res.writeHead(200, { 'Content-Type': 'text/css' });
