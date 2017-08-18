@@ -4,10 +4,10 @@ Small router module for nodejs that allow allows users to execute callback code 
 [![npm version](https://badge.fury.io/js/small-router.svg)](https://badge.fury.io/js/small-router)
 [![Build Status](https://travis-ci.org/SC7639/node-small-router.svg?branch=master)](https://travis-ci.org/SC7639/node-small-router)
 
-#Installation
+# Installation
     npm install small-router
 
-#Quick Example
+# Quick Example
 ```javascript
 var http = require('http');
 var router = require('../index')(http);
