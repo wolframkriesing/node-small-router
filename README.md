@@ -10,7 +10,7 @@ Small router module for nodejs that allow allows users to execute callback code 
 # Quick Example
 ```javascript
 var http = require('http');
-var router = require('../index')(http);
+var router = require('small-router')(http);
 
 router.addRoute('/', function(req, res, url) { // Standard route
   res.writeHead(200, { 'Content-Type': 'text/html' });
