@@ -4,7 +4,8 @@
   "description": "Small router module that creates http server and runs callbacks that have have been added for a route via the api",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/index.js",
+    "test": "npx mocha tests/index.js",
+    "test:watch": "npx mocha --watch tests/index.js",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- tests -R spec"
   },
   "repository": {
@@ -18,6 +19,7 @@
   "author": "SC7639",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^12.0.4",
     "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
     "should": "^8.2.2"

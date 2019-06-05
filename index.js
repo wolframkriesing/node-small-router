@@ -3,6 +3,7 @@
 const fs = require('fs');
 const querystring = require('querystring');
 const formidable = require('formidable');
+const url = require('url');
 
 module.exports = (http) => {
     class Router {
@@ -50,7 +51,7 @@ module.exports = (http) => {
          * @param {string} path
          * @param {bool} overWrite
          */
-        addAssetPath(asset, path, overWrite) {
+         addAssetPath(asset, path, overWrite) {
             overWrite = overWrite || false;
             let success = false;
 
@@ -79,15 +80,18 @@ module.exports = (http) => {
          * @param {ServerResponse} res
          */
         route(req, res) {
-            let url = req.url;
-            let routes = Object.keys(this.routes);
-            let assetPaths = Object.keys(this.assetPaths);
-            let urlParts = url.split('/');
+            const rawUrl = req.url;
+            const routes = Object.keys(this.routes);
+            const assetPaths = Object.keys(this.assetPaths);
+            const parsedUrl = url.parse(rawUrl);
+            const urlPathname = parsedUrl.pathname;
+            const urlParts = parsedUrl.pathname.split('/');
+            const queryString = querystring.parse(parsedUrl.query);
 
-            if(url.includes('.')) { // If the url is for an asset
-                let fileType = url.split('.');
+            if(rawUrl.includes('.')) { // If the url is for an asset
+                let fileType = rawUrl.split('.');
                 fileType = fileType[fileType.length - 1];
-                let file = url.replace('/', '');
+                let file = rawUrl.replace('/', '');
                 let assetType = urlParts[1];
 
                 if(assetPaths.indexOf(assetType) !== -1) { // If the asset has been speicified
@@ -110,8 +114,8 @@ module.exports = (http) => {
                 }
             }
             else {
-                if(routes.indexOf(url) !== -1) { // If the url is for a page route
-                    this.routes[url](req, res, url);
+                if(routes.indexOf(urlPathname) !== -1) { // If the url is for a page route
+                    this.routes[urlPathname](req, res, rawUrl, queryString);
                 }
                 else {
                     let routeMatch = false;
@@ -139,13 +143,13 @@ module.exports = (http) => {
 
                                 if(param) {
                                     routeMatch = true;
-                                    return this.routes[route](req, res, url);
+                                    return this.routes[route](req, res, rawUrl, queryString);
                                 }
                             }
                             else if(routeParts.length === urlParts.length) {
-                                if(routeParts[0] == url) {
+                                if(routeParts[0] == rawUrl) {
                                     routeMatch = true;
-                                    return this.routes[route](req, res, url);
+                                    return this.routes[route](req, res, rawUrl, queryString);
                                 }
                                 else{
                                     let param = this.parseURLParameter(urlParts[0], routeParts[0]);
@@ -153,11 +157,12 @@ module.exports = (http) => {
                                     if(param) {
                                         routeMatch = true;
                                         req.parameters = Object.assign(req.parameters, param);
-                                        return this.routes[route](req, res, url);
+                                        return this.routes[route](req, res, rawUrl, queryString);
                                     }
                                     else {
                                         routeMatch = true;
-                                        return this.pageNotFound(res, url);
+
+                                        return this.pageNotFound(res, rawUrl);
                                     }
                                 }
                             }
@@ -165,7 +170,7 @@ module.exports = (http) => {
                     });
 
                     if(!routeMatch) {
-                        return this.pageNotFound(res, url);
+                        return this.pageNotFound(res, rawUrl);
                     }
                 }
             }
@@ -181,7 +186,7 @@ module.exports = (http) => {
         }
 
         /**
-         * Responde with asset file contents to the http request
+         * Respond with asset file contents to the http request
          * @param {string} path
          * @param {string} file
          * @param {string} assetType

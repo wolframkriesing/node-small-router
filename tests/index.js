@@ -39,6 +39,16 @@ describe('server', () => {
             });
         });
 
+        router.addRoute('/another/test', (req, res, url) => {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end('another test route');
+        });
+
+        router.addRoute('/another/test/with/query-string', (req, res, url, queryString) => {
+            res.writeHead(200, { 'Context-Type': 'text/html' });
+            res.end(JSON.stringify(queryString));
+        });
+
         router.addAssetPath('images', 'tests/images/');
         router.addAssetPath('js', 'tests/js/');
 
@@ -155,16 +165,12 @@ describe('server', () => {
         });
 
         it('it should return css file contents', (done) => {
+            const css = fs.readFileSync(__dirname + '/css/style.css');
+
             http.get(`${SERVER_URL}${route}`, (res) => {
                 let data = '';
                 res.on('data', chunk => data += chunk).on('end', () => {
-                    if(/^win/.test(process.platform)) {
-                        data.should.equal(`html {\r\n    text-align: center;\r\n}\r\n`);
-                    }
-                    else {
-                        data.should.equal(`html {\n    text-align: center;\n}\n`);
-                    }
-
+                    data.should.equal(css.toString());
                     done();
                 });
             });
@@ -322,6 +328,36 @@ describe('server', () => {
                     res.end("hii");
                 });
             }).should.throw('Route already exists /about');
+        });
+    });
+
+    describe("Routes with querystrings", function() {
+        it('it should accept query strings as part of the route', (done) => {
+            http.get(`${SERVER_URL}/another/test?fbclid=IwAR2kJ3zxaGmHK`, (res) => {
+                res.statusCode.should.equal(200);
+
+                let body = '';
+                res.on('data', (chunk) => {
+                    body += chunk;
+                }).on('end', () => {
+                    body.should.equal("another test route");
+                    done();
+                });
+            });
+        });
+
+        it('it should send query string back as json', (done) => {
+            http.get(`${SERVER_URL}/another/test/with/query-string?test=true`, (res) => {
+                res.statusCode.should.equal(200);
+
+                let body = ''
+                res.on('data', (chunk) => {
+                    body += chunk;
+                }).on('end', () => {
+                    JSON.stringify({test: 'true'}).should.equal(body);
+                    done();
+                });
+            });
         });
     });
 
