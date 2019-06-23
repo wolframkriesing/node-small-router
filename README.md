@@ -1,5 +1,7 @@
 # node-small-router
-Small router module for nodejs that allow allows users to execute callback code on a named route with or without parameters
+Small router module for nodejs that allow allows users to execute callback code on a named route with or without parameters and query strings.
+
+Dropped support for versions of node under 8.0 due to security issues with dependencies spotted by npm audit
 
 [![npm version](https://badge.fury.io/js/small-router.svg)](https://badge.fury.io/js/small-router)
 [![Build Status](https://travis-ci.org/SC7639/node-small-router.svg?branch=master)](https://travis-ci.org/SC7639/node-small-router)
