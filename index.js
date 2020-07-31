@@ -266,7 +266,7 @@ module.exports = (http) => {
             res.end(notFound);
         }
 
-        close(cb) {
+        close() {
             this.server.close();
         }
     }
