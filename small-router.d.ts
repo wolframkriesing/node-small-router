@@ -2,13 +2,13 @@ import http, { Server } from 'http'
 import { ParsedUrlQuery } from 'querystring';
 import { Fields, Files } from 'formidable'
 
-export function addRouteCB(req: http.IncomingMessage, res: http.ServerResponse, rawUrl: string, queryString: ParsedUrlQuery): void;
-export function parseDataCB(err: null | Error, fields: Fields, files: Files)
+export type addRouteCB = (req: http.IncomingMessage, res: http.ServerResponse, rawUrl: string, queryString: ParsedUrlQuery): void;
+export type parseDataCB =(err: null | Error, fields: Fields, files: Files) => void
 
 export class Router {
     constructor(): void;
     addRoute(route: string, cb: addRouteCB): boolean;
-    addAssetPath(asset: string, path: string, overWrite: boolean): boolean;
+    addAssetPath(asset: string, path: string, overWrite?: boolean): boolean;
     route(req: http.IncomingMessage, res: http.ServerResponse): void;
     listen(port: number, cb: typeof Server.listen): void;
     renderAsset(path: string, file: string, assetType: string, res: http.ServerResponse): void;
