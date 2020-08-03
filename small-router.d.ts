@@ -2,8 +2,8 @@ import http, { Server } from 'http'
 import { ParsedUrlQuery } from 'querystring';
 import { Fields, Files } from 'formidable'
 
-export type addRouteCB = (req: http.IncomingMessage, res: http.ServerResponse, rawUrl: string, queryString: ParsedUrlQuery): void;
-export type parseDataCB =(err: null | Error, fields: Fields, files: Files) => void
+export type addRouteCB = (req: http.IncomingMessage, res: http.ServerResponse, rawUrl: string, queryString: ParsedUrlQuery) => void
+export type parseDataCB = (err: null | Error, fields: Fields, files: Files) => void
 
 export class Router {
     constructor(): void;
