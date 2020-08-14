@@ -1,4 +1,5 @@
-import http, { Server } from 'http'
+import http from 'http'
+import { Server } from 'net'
 import { ParsedUrlQuery } from 'querystring';
 import { Fields, Files } from 'formidable'
 
@@ -6,7 +7,8 @@ export type addRouteCB = (req: http.IncomingMessage, res: http.ServerResponse, r
 export type parseDataCB = (err: null | Error, fields: Fields, files: Files) => void
 
 export class Router {
-    constructor(): void;
+    prefix: string;
+    constructor();
     addRoute(route: string, cb: addRouteCB): boolean;
     addAssetPath(asset: string, path: string, overWrite?: boolean): boolean;
     route(req: http.IncomingMessage, res: http.ServerResponse): void;
