@@ -203,7 +203,6 @@ module.exports = (http) => {
 
       fs.readFile(filePath, (err, data) => {
         if (err) {
-          console.error(err);
           res.statusCode = 404;
           res.end(`File ${filePath} doesn't exist`);
         }
