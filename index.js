@@ -113,9 +113,8 @@ module.exports = (http) => {
           if (this.assetPaths.hasOwnProperty(fileType) && this.assetPaths[fileType].hasOwnProperty('path')) {
             const { path: filePath } = this.assetPaths[file];
             file = filePath.replace(`${assetType}/`, '');
+            this.renderAsset(assetType, file, assetType, res);
           }
-
-          this.renderAsset(assetType, file, assetType, res);
         }
       }
       else {
@@ -199,12 +198,14 @@ module.exports = (http) => {
      * @param string stripFromPath
      */
     renderAsset(path, file, assetType, res, stripFromPath) {
+      file = file.replace(/\.\.\//g, '');
       const filePath = `${path}${file}`.replace(stripFromPath, '');
 
       fs.readFile(filePath, (err, data) => {
         if (err) {
+          // console.error(err);
           res.statusCode = 404;
-          res.end(`File ${filePath} doesn't exist`);
+          res.end(`File not found`);
         }
 
         if (assetType == 'js') {
