@@ -100,16 +100,18 @@ module.exports = (http) => {
             file = file.replace(`${assetType}/`, '');
           }
 
-          const { path, stripFromPath } = this.assetPaths[assetType];
-          this.renderAsset(path, file, assetType, res, stripFromPath);
+          if (this.assetPaths[assetType] && this.assetPaths[assetType].hasOwnProperty('path')) {
+            const { path, stripFromPath } = this.assetPaths[assetType];
+            this.renderAsset(path, file, assetType, res, stripFromPath);
+          }
         }
-        else if (assetPaths.indexOf(fileType) !== -1) {
+        else if (assetPaths.indexOf(fileType) !== -1 && this.assetPaths[fileType].hasOwnProperty('path')) {
           const { path, stripFromPath } = this.assetPaths[fileType];
           this.renderAsset(path, file, fileType, res, stripFromPath);
         }
         else {
-          if (this.assetPaths.hasOwnProperty(fileType)) {
-            const { path, stripFromPath } = this.assetPaths[file];
+          if (this.assetPaths.hasOwnProperty(fileType) && this.assetPaths[fileType].hasOwnProperty('path')) {
+            const { path } = this.assetPaths[file];
             file = path.replace(`${assetType}/`, '');
           }
 
