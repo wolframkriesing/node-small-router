@@ -19,7 +19,7 @@ export class Router {
   prefix: string;
   constructor();
   addRoute(route: string | string[], cb: addRouteCB): boolean;
-  addAssetPath(asset: string, path: string, overWrite?: boolean): boolean;
+  addAssetPath(asset: string, path: string, overWrite?: boolean, stripFromPath?: string): boolean;
   route(req: http.IncomingMessage, res: http.ServerResponse): void;
   listen(port: number, cb: typeof Server.listen): void;
   renderAsset(
