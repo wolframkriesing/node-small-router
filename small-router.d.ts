@@ -3,8 +3,11 @@ import { Server } from "net";
 import { ParsedUrlQuery } from "querystring";
 import { Fields, Files } from "formidable";
 
+type Parameters = { [key: string]: string };
+type Request = http.IncomingMessage & { parameters: Parameters };
+
 export type addRouteCB = (
-  req: http.IncomingMessage,
+  req: Request,
   res: http.ServerResponse,
   rawUrl: string,
   queryString: ParsedUrlQuery
@@ -19,7 +22,12 @@ export class Router {
   prefix: string;
   constructor();
   addRoute(route: string | string[], cb: addRouteCB): boolean;
-  addAssetPath(asset: string, path: string, overWrite?: boolean, stripFromPath?: string): boolean;
+  addAssetPath(
+    asset: string,
+    path: string,
+    overWrite?: boolean,
+    stripFromPath?: string
+  ): boolean;
   route(req: http.IncomingMessage, res: http.ServerResponse): void;
   listen(port: number, cb: typeof Server.listen): void;
   renderAsset(
