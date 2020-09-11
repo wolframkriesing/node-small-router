@@ -116,6 +116,8 @@ module.exports = (http) => {
             this.renderAsset(assetType, file, assetType, res);
           }
         }
+
+        this.pageNotFound(res, rawUrl);
       }
       else {
         if (routes.indexOf(urlPathname) !== -1) { // If the url is for a page route
