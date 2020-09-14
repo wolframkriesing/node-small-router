@@ -21,7 +21,7 @@ export type parseDataCB = (
 export class Router {
   prefix: string;
   constructor();
-  addRoute(route: string | string[], cb: addRouteCB): boolean;
+  addRoute(route: string | string[], cb: addRouteCB, method?: string): boolean;
   addAssetPath(
     asset: string,
     path: string,
@@ -40,6 +40,10 @@ export class Router {
   parseURLParameter(urlPart: string, routePart: string): string | false;
   pageNotFound(res: http.ServerResponse, url: string): void;
   close(): void;
+  get(route: string | string[], cb: addRouteCB);
+  post(route: string | string[], cb: addRouteCB);
+  put(route: string | string[], cb: addRouteCB);
+  delete(route: string | string[], cb: addRouteCB);
 }
 
 export default function smallRouter(http: typeof import("http")): Router;

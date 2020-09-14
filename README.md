@@ -26,6 +26,29 @@ router.addRoute('/test/:param([a-z]+)', function(req, res, url) { // Route with 
   res.end('Parameter value: ' + param);
 });
 
+router.get('/test/get/method', function(req, res, url) { // Route that only accepts get requests
+
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end('Test get method only');
+});
+
+router.post('/test/get/method', function(req, res, url) { // Route that only accepts post requests
+
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res;.end('Test post method only');
+});
+
+router.put('/test/put/method', function(req, res, url) { // Route that only accepts put requests
+
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end('Test put method only');
+});
+
+router.delete('/test/delete/method', function(req, res, url) { // Route that only accepts delete requests
+
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end('Test delete method only');
+});
 
 router.listen(3000, function() { // Set port for router/server to listen to
   console.log("Server listening on port 3000");
