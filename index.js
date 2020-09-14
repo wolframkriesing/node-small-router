@@ -1,5 +1,8 @@
 "use strict";
 
+// @ts-check
+/// <reference path="./index.d.ts>"
+
 const fs = require('fs');
 const querystring = require('querystring');
 const formidable = require('formidable');
@@ -18,14 +21,17 @@ module.exports = (http) => {
      * Add route callback code to routes object
      * @param {string} path
      * @param {function} cb
+     * @param {method} method
      * @return {bool}
      */
-    addRoute(route, cb) {
+    addRoute(route, cb, method) {
+      method = method ? method : "*"; // old school default param
+
       let success = false;
 
       if (Array.isArray(route)) {
         route.forEach((route) => {
-          this.addRoute(route, cb);
+          this.addRoute(route, cb, method);
         });
       }
       else {
@@ -34,7 +40,10 @@ module.exports = (http) => {
         }
 
         if (!this.routes.hasOwnProperty(route)) { // Check if the route already exists
-          this.routes[route] = cb;
+          this.routes[route] = {
+            method: method,
+            cb: cb
+          };
           success = true;
         }
         else {
@@ -116,12 +125,16 @@ module.exports = (http) => {
             return this.renderAsset(assetType, file, assetType, res);
           }
         }
-        
+
         this.pageNotFound(res, rawUrl);
       }
       else {
         if (routes.indexOf(urlPathname) !== -1) { // If the url is for a page route
-          this.routes[urlPathname](req, res, rawUrl, queryString);
+          const {method, cb} = this.routes[urlPathname];
+          if (!this.checkMethod(req, res ,method)) {
+            return;
+          }
+          cb(req, res, rawUrl, queryString);
         }
         else {
           let routeMatch = false;
@@ -149,13 +162,23 @@ module.exports = (http) => {
 
                 if (param) {
                   routeMatch = true;
-                  return this.routes[route](req, res, rawUrl, queryString);
+                  const {method, cb} = this.routes[route];
+
+                  if (!this.checkMethod(req, res ,method)) {
+                    return;
+                  }
+                  return cb(req, res, rawUrl, queryString);
                 }
               }
               else if (routeParts.length === urlParts.length) {
                 if (routeParts[0] === rawUrl) {
                   routeMatch = true;
-                  return this.routes[route](req, res, rawUrl, queryString);
+
+                  const {method, cb} = this.routes[route];
+                  if (!this.checkMethod(req, res ,method)) {
+                    return
+                  }
+                  return cb(req, res, rawUrl, queryString);
                 }
                 else {
                   let param = this.parseURLParameter(urlParts[0], routeParts[0]);
@@ -163,7 +186,12 @@ module.exports = (http) => {
                   if (param) {
                     routeMatch = true;
                     req.parameters = Object.assign(req.parameters, param);
-                    return this.routes[route](req, res, rawUrl, queryString);
+
+                    const {method, cb} = this.routes[route];
+                    if (!!this.checkMethod(req, res ,method)) {
+                      return;
+                    }
+                    return cb (req, res, rawUrl, queryString);
                   }
                   else {
                     routeMatch = true;
@@ -252,6 +280,9 @@ module.exports = (http) => {
       if (routePart.indexOf(':') === 0) {
         let param = {};
         let parameterSections = routePart.split('(');
+        if (parameterSections.length < 2) {
+          throw new Error("Regex is missing from " + parameterSections[0] + ". Url parameters request a regex in \"/:param(regex)\" format.")
+        }
         let paramName = parameterSections[0].replace(':', '');
         let regex = new RegExp(`(${parameterSections[1]}`);
 
@@ -280,8 +311,45 @@ module.exports = (http) => {
     close() {
       this.server.close();
     }
-  }
 
+    get(route, cb) {
+      this.addRoute(route, cb, "GET");
+    }
+
+    post(route, cb) {
+      this.addRoute(route, cb, "POST")
+    }
+
+    put(route, cb) {
+      this.addRoute(route, cb, "PUT")
+    }
+
+    delete(route, cb) {
+      this.addRoute(route, cb, "DELETE")
+    }
+
+    /**
+     * Check if the request method is what was expected for the route
+     *
+     * @param {http.IncomingMessage} req
+     * @param {http.ServerResponse} res
+     * @param {string} expected
+     * @return {boolean}
+     */
+    checkMethod(req, res, expected) {
+      if (expected === "*") {
+         return true;
+      }
+
+      if (req.method.toLowerCase() === expected.toLowerCase()) {
+        return true;
+      }
+
+      res.statusCode = 405;
+      res.end(`Method not allowed for ${req.url}`);
+      return false;
+    }
+  }
 
 
   return new Router();

@@ -49,6 +49,26 @@ describe('server', () => {
             res.end(JSON.stringify(queryString));
         });
 
+        router.get("/test/get/method", (req, res ) => {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end("test text");
+        })
+
+        router.post("/test/post/method", (req, res ) => {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end("test text");
+        })
+
+        router.put("/test/put/method", (req, res ) => {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end("test text");
+        })
+
+        router.delete("/test/delete/method", (req, res ) => {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end("test text");
+        })
+
         router.addAssetPath('images', 'tests/images/');
         router.addAssetPath('js', 'tests/js/');
 
@@ -359,6 +379,166 @@ describe('server', () => {
                 });
             });
         });
+    });
+
+    describe("Routes with specific request methods", function() {
+        it("it should only accept get method requests", (done) => {
+            Promise.all([
+                new Promise((resolve, reject) => {
+                    http.get(`${SERVER_URL}/test/get/method`, (res) => {
+                        res.statusCode.should.equal(200);
+
+                        let body = '';
+                        res.on('data', (chunk) => body += chunk)
+                            .on("end", () => {
+                                body.should.equal("test text")
+                                resolve();
+                            });
+                    });
+                }),
+                new Promise((resolve, reject) => {
+                    const req = http.request({
+                        url: `http://localhost/`,
+                        port: '8000',
+                        method: 'POST',
+                        path: "/test/get/method",
+                    }, (res) => {
+                        res.statusCode.should.equal(405);
+                        let body = "";
+                        res.on("data", (chunk) => body += chunk)
+                            .on("end", () => {
+                                body.should.equal("Method not allowed for /test/get/method")
+                                resolve();
+                            });
+                    });
+
+                    req.on('error', (err) => {
+                        throw err;
+                    });
+
+                    req.end();
+                })
+            ]).then(() => done());
+        });
+
+        it("it should only accept post requests", (done) => {
+            const path = "/test/post/method";
+            Promise.all([
+                new Promise((resolve, reject) => {
+                    const req = http.request({
+                        url: "http://locahost",
+                        port: "8000",
+                        method: "POST",
+                        path,
+                    }, res => {
+                        res.statusCode.should.equal(200);
+                        let body = "";
+                        res.on("data", chunk => body += chunk)
+                            .on("end", () => {
+                                body.should.equal("test text");
+                                resolve();
+                            });
+                    });
+
+                    req.on("error", err => {
+                        throw err
+                    });
+                    req.end();
+                }),
+                new Promise((resolve, reject) => {
+                    http.get(`${SERVER_URL}${path}`, res => {
+                        res.statusCode.should.equal(405);
+
+                        let body = "";
+                        res.on("data", chunk => body += chunk)
+                            .on("end", () => {
+                                body.should.equal(`Method not allowed for ${path}`)
+                                resolve();
+                            });
+                    });
+                })
+            ]).then(() => done());
+        });
+
+        it("it should only accept put method requests", (done) => {
+            const path = "/test/put/method";
+
+            Promise.all([
+                new Promise((resolve, reject) => {
+                    const req = http.request({
+                        url: "http://locahost",
+                        port: 8000,
+                        path,
+                        method: "PUT",
+                    }, res => {
+                        res.statusCode.should.equal(200);
+
+                        let body = "";
+                        res.on("data", chunk => body += chunk)
+                            .on("end", () => {
+                                body.should.equal("test text");
+                                resolve()
+                            });
+                    });
+
+                    req.on("error", (err) => {
+                        throw err;
+                    })  .end();
+                }),
+                new Promise((resolve, reject) => {
+                    http.get(`${SERVER_URL}${path}`, res => {
+                        res.statusCode.should.equal(405);
+
+                        let body = "";
+                        res.on("data", chunk => body += chunk)
+                            .on("end", () => {
+                                body.should.equal(`Method not allowed for ${path}`)
+                                resolve()  ;
+                            });
+                    });
+                })
+            ]).then(() => done());
+        });
+
+        it("it should only accept delete method requests", (done) => {
+            const path = "/test/delete/method";
+
+            Promise.all([
+                new Promise((resolve, reject) => {
+                    const req = http.request({
+                        url: "http://locahost",
+                        port: 8000,
+                        path,
+                        method: "DELETE",
+                    }, res => {
+                        res.statusCode.should.equal(200);
+
+                        let body = "";
+                        res.on("data", chunk => body += chunk)
+                            .on("end", () => {
+                                body.should.equal("test text");
+                                resolve()
+                            });
+                    });
+
+                    req.on("error", (err) => {
+                        throw err;
+                    })  .end();
+                }),
+                new Promise((resolve, reject) => {
+                    http.get(`${SERVER_URL}${path}`, res => {
+                        res.statusCode.should.equal(405);
+
+                        let body = "";
+                        res.on("data", chunk => body += chunk)
+                            .on("end", () => {
+                                body.should.equal(`Method not allowed for ${path}`)
+                                resolve()  ;
+                            });
+                    });
+                })
+            ]).then(() => done());
+        })
     });
 
     after(() => {
