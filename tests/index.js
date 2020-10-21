@@ -10,7 +10,7 @@ const SERVER_URL = 'http://localhost:8000';
 
 describe('server', () => {
     before(() => {
-        router.addRoute(['/', 'about'], (req, res, url) => {
+        router.addRoute(['/', 'about', 'about/'], (req, res, url) => {
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end("test text");
         });
@@ -378,6 +378,30 @@ describe('server', () => {
                     done();
                 });
             });
+        });
+
+        it('should allow "." in the search/query params', (done) => {
+          http.get(`${SERVER_URL}/about/?test=22.33&moo=-!@£$%%`, (res) => {
+            res.statusCode.should.equal(200);
+            let data = '';
+            res.on('data', chunk => data += chunk).on('end', () => {
+              data.should.equal("test text");
+              done();
+            });
+
+          });
+        });
+
+        it('should allow all special chars in the search/query params', (done) => {
+          http.get(`${SERVER_URL}/about/?test=22.33&moo=-!@£$%%^&*()_-+=[]{}~\`?±§/`, (res) => {
+            res.statusCode.should.equal(200);
+            let data = '';
+            res.on('data', chunk => data += chunk).on('end', () => {
+              data.should.equal("test text");
+              done();
+            });
+
+          });
         });
     });
 
