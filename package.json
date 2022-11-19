@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha tests/index.js",
     "test:watch": "npx mocha --watch tests/index.js",
-    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- tests -R spec"
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- tests -R spec",
+    "prettify": "prettier **/*.{d.ts,js} --write"
   },
   "repository": {
     "type": "git",
