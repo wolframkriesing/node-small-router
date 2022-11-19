@@ -570,18 +570,18 @@ describe('server', () => {
         })
     });
 
-  describe('Routes with a dot in them', () => {
-    it('should be allowed to add routes like `addRoute("/README.md")`', (done) => {
-      http.get(`${SERVER_URL}/README.md`, (res) => {
-        res.statusCode.should.equal(200);
-        let data = '';
-        res.on('data', chunk => data += chunk).on('end', () => {
-          data.should.equal("README.md content");
-          done();
+    describe('Routes with a dot in them', () => {
+        it('should be allowed to add routes like `addRoute("/README.md")`', (done) => {
+            http.get(`${SERVER_URL}/README.md`, (res) => {
+                res.statusCode.should.equal(200);
+                let data = '';
+                res.on('data', chunk => data += chunk).on('end', () => {
+                  data.should.equal("README.md content");
+                  done();
+                });
+            });
         });
-      });
     });
-  });
 
     after(() => {
         router.close();
