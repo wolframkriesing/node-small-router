@@ -7,6 +7,7 @@ const fs = require('fs');
 const querystring = require('querystring');
 const formidable = require('formidable');
 const url = require('url');
+const {join: joinPath} = require('path');
 
 module.exports = (http) => {
   class Router {
@@ -230,7 +231,7 @@ module.exports = (http) => {
      */
     renderAsset(path, file, assetType, res, stripFromPath) {
       file = file.replace(/\.\.\//g, '');
-      const filePath = `${path}${file}`.replace(stripFromPath, '');
+      const filePath = joinPath(path, file).replace(stripFromPath, '');
 
       fs.readFile(filePath, (err, data) => {
         if (err) {
