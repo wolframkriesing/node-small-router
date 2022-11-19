@@ -49,6 +49,11 @@ describe('server', () => {
             res.end(JSON.stringify(queryString));
         });
 
+        router.addRoute('/README.md', (req, res) => {
+            res.writeHead(200, { 'Context-Type': 'text/plain' });
+            res.end('README.md content');
+        });
+
         router.get("/test/get/method", (req, res ) => {
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end("test text");
@@ -564,6 +569,19 @@ describe('server', () => {
             ]).then(() => done());
         })
     });
+
+  describe('Routes with a dot in them', () => {
+    it('should be allowed to add routes like `addRoute("/README.md")`', (done) => {
+      http.get(`${SERVER_URL}/README.md`, (res) => {
+        res.statusCode.should.equal(200);
+        let data = '';
+        res.on('data', chunk => data += chunk).on('end', () => {
+          data.should.equal("README.md content");
+          done();
+        });
+      });
+    });
+  });
 
     after(() => {
         router.close();
