@@ -105,7 +105,7 @@ module.exports = (http) => {
         let file = rawUrl.replace('/', '');
         let assetType = urlParts[1];
 
-        if (assetPaths.indexOf(assetType) !== -1) { // If the asset has been speicified
+        if (assetPaths.indexOf(assetType) !== -1) { // If the asset has been specified
           if (file.indexOf(assetType) !== -1) {
             file = file.replace(`${assetType}/`, '');
           }
