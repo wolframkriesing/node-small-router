@@ -98,10 +98,9 @@ module.exports = (http) => {
       const urlPathname = parsedUrl.pathname.replaceAll(/\/+/g, '/');
       const urlParts = parsedUrl.pathname.split('/');
       const queryString = querystring.parse(parsedUrl.query);
-      const urlWithoutQueryString = parsedUrl.pathname;
 
-      const isOneOfRoutes = routes.includes(urlWithoutQueryString);
-      if (isOneOfRoutes === false && urlWithoutQueryString.includes('.')) { // If the url is for an asset
+      const isOneOfRoutes = routes.includes(urlPathname);
+      if (isOneOfRoutes === false && urlPathname.includes('.')) { // If the url is for an asset
         let fileType = rawUrl.split('.');
         fileType = fileType[fileType.length - 1];
         let file = rawUrl.replace('/', '');
