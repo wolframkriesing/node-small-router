@@ -565,6 +565,21 @@ describe('server', () => {
         })
     });
 
+    describe('Tolerant route handling', () => {
+        it('should ignore multiple slashes (e.g. http://localhost//) and return 200 status code', (done) => {
+            http.get(`${SERVER_URL}//`, (res) => {
+                res.statusCode.should.equal(200);
+                done();
+            });
+        });
+        it('should ignore various multiple slashes (e.g. http://localhost/////another//test) and return 200 status code', (done) => {
+            http.get(`${SERVER_URL}//////another///test`, (res) => {
+                res.statusCode.should.equal(200);
+                done();
+            });
+        });
+    });
+
     after(() => {
         router.close();
     });
