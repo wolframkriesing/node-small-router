@@ -209,6 +209,20 @@ describe('server', () => {
                 done();
             });
         });
+      it('should return the content-type `javascript` also when the asset path is some random string', (done) => {
+          router.addAssetPath('random-string1', 'tests/js/');
+          http.get(`${SERVER_URL}/random-string1/empty.js`, (res) => {
+              res.headers['content-type'].should.equal('text/javascript');
+              done();
+          });
+      });
+      it('should return the content-type `css` also when the asset path is some random string', (done) => {
+          router.addAssetPath('random-string2', 'tests/css/');
+          http.get(`${SERVER_URL}/random-string2/style.css`, (res) => {
+              res.headers['content-type'].should.equal('text/css');
+                done();
+            });
+        });
     });
 
     describe('/images/loader.gif', () => {
