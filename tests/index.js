@@ -179,7 +179,7 @@ describe('server', () => {
         });
     });
 
-    describe('/style.css, assets', () => {
+    describe('assets - css, js, svg', () => {
         let route = '/style.css';
 
         it('it should return 200 status code', (done) => {
@@ -220,6 +220,12 @@ describe('server', () => {
           router.addAssetPath('random-string2', 'tests/css/');
           http.get(`${SERVER_URL}/random-string2/style.css`, (res) => {
               res.headers['content-type'].should.equal('text/css');
+            done();
+        });
+    });
+        it('when serving an SVG file the right content-type is sent', (done) => {
+            http.get(`${SERVER_URL}/images/empty.svg`, (res) => {
+                res.headers['content-type'].should.equal('image/svg+xml');
                 done();
             });
         });
