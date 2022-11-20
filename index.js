@@ -247,6 +247,10 @@ module.exports = (http) => {
           res.writeHead(200, { 'Content-Type': 'text/css' });
         }
 
+        if (assetType === 'svg' || file.endsWith('.svg')) {
+          res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
+        }
+
         res.end(data);
       });
     }

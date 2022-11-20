@@ -174,7 +174,7 @@ describe('server', () => {
         });
     });
 
-    describe('/style.css, assets', () => {
+    describe('assets - css, js, svg', () => {
         let route = '/style.css';
 
         it('it should return 200 status code', (done) => {
@@ -193,6 +193,13 @@ describe('server', () => {
                     data.should.equal(css.toString());
                     done();
                 });
+            });
+        });
+
+        it('when serving an SVG file the right content-type is sent', (done) => {
+            http.get(`${SERVER_URL}/images/empty.svg`, (res) => {
+                res.headers['content-type'].should.equal('image/svg+xml');
+                done();
             });
         });
     });
