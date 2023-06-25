@@ -240,12 +240,16 @@ module.exports = (http) => {
           res.end(`File not found`);
         }
 
-        if (assetType == 'js') {
+        if (assetType === 'js' || file.endsWith('.js')) {
           res.writeHead(200, { 'Content-Type': 'text/javascript' });
         }
 
-        if (assetType == 'css') {
+        if (assetType === 'css' || file.endsWith('.css')) {
           res.writeHead(200, { 'Content-Type': 'text/css' });
+        }
+
+        if (assetType === 'svg' || file.endsWith('.svg')) {
+          res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
         }
 
         res.end(data);
