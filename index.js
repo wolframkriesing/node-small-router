@@ -102,16 +102,12 @@ module.exports = (http) => {
             const routes = Object.keys(this.routes);
             const assetPaths = Object.keys(this.assetPaths);
             const parsedUrl = url.parse(rawUrl);
-            const urlPathname = parsedUrl.pathname;
+            const urlPathname = parsedUrl.pathname.replaceAll(/\/+/g, "/");
             const urlParts = parsedUrl.pathname.split("/");
             const queryString = querystring.parse(parsedUrl.query);
-            const urlWithoutQueryString = parsedUrl.pathname;
 
-            const isOneOfRoutes = routes.includes(urlWithoutQueryString);
-            if (
-                isOneOfRoutes === false &&
-                urlWithoutQueryString.includes(".")
-            ) {
+            const isOneOfRoutes = routes.includes(urlPathname);
+            if (isOneOfRoutes === false && urlPathname.includes(".")) {
                 // If the url is for an asset
                 let fileType = rawUrl.split(".");
                 fileType = fileType[fileType.length - 1];
@@ -343,8 +339,8 @@ module.exports = (http) => {
                 if (parameterSections.length < 2) {
                     throw new Error(
                         "Regex is missing from " +
-                            parameterSections[0] +
-                            '. Url parameters request a regex in "/:param(regex)" format.'
+                        parameterSections[0] +
+                        '. Url parameters request a regex in "/:param(regex)" format.'
                     );
                 }
                 let paramName = parameterSections[0].replace(":", "");
