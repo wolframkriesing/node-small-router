@@ -182,7 +182,7 @@ describe("server", () => {
         });
     });
 
-    describe("/style.css, assets", () => {
+    describe("assets - css, js, svg", () => {
         let route = "/style.css";
 
         it("it should return 200 status code", (done) => {
@@ -201,6 +201,37 @@ describe("server", () => {
                     data.should.equal(css.toString());
                     done();
                 });
+            });
+        });
+
+        it('when serving an SVG file the right content-type is sent', (done) => {
+            http.get(`${SERVER_URL}/images/empty.svg`, (res) => {
+                res.headers['content-type'].should.equal('image/svg+xml');
+                done();
+            });
+        });
+
+        it('should return the content-type `javascript` also when the asset path is some random string', (done) => {
+            router.addAssetPath('random-string1', 'tests/js/');
+            http.get(`${SERVER_URL}/random-string1/empty.js`, (res) => {
+                res.headers['content-type'].should.equal('text/javascript');
+                done();
+            });
+        });
+        it('should return the content-type `css` also when the asset path is some random string', (done) => {
+            router.addAssetPath('random-string2', 'tests/css/');
+            http.get(`${SERVER_URL}/random-string2/style.css`, (res) => {
+                res.headers['content-type'].should.equal('text/css');
+                done();
+            });
+        });
+
+        it('should also find assetPath when defined *without* trailing slash', (done) => {
+            const pathWithoutTrailingSlash = 'tests/js';
+            router.addAssetPath('javascript', pathWithoutTrailingSlash);
+            http.get(`${SERVER_URL}/javascript/empty.js`, (res) => {
+                res.statusCode.should.equal(200);
+                done();
             });
         });
     });
