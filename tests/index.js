@@ -217,6 +217,15 @@ describe('server', () => {
                 done();
             });
         });
+
+        it('should also find assetPath when defined *without* trailing slash', (done) => {
+            const pathWithoutTrailingSlash = 'tests/js';
+            router.addAssetPath('javascript', pathWithoutTrailingSlash);
+            http.get(`${SERVER_URL}/javascript/empty.js`, (res) => {
+                res.statusCode.should.equal(200);
+                done();
+            });
+        });
     });
 
     describe('/images/loader.gif', () => {

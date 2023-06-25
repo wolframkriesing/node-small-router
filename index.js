@@ -7,6 +7,7 @@ const fs = require('fs');
 const querystring = require('querystring');
 const formidable = require('formidable');
 const url = require('url');
+const {join: joinPath} = require('path');
 
 module.exports = (http) => {
   class Router {
@@ -105,7 +106,7 @@ module.exports = (http) => {
         let file = rawUrl.replace('/', '');
         let assetType = urlParts[1];
 
-        if (assetPaths.indexOf(assetType) !== -1) { // If the asset has been speicified
+        if (assetPaths.indexOf(assetType) !== -1) { // If the asset has been specified
           if (file.indexOf(assetType) !== -1) {
             file = file.replace(`${assetType}/`, '');
           }
@@ -230,7 +231,7 @@ module.exports = (http) => {
      */
     renderAsset(path, file, assetType, res, stripFromPath) {
       file = file.replace(/\.\.\//g, '');
-      const filePath = `${path}${file}`.replace(stripFromPath, '');
+      const filePath = joinPath(path, file).replace(stripFromPath, '');
 
       fs.readFile(filePath, (err, data) => {
         if (err) {
