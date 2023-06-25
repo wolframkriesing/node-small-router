@@ -1,6 +1,6 @@
 {
   "name": "small-router",
-  "version": "1.2.2",
+  "version": "2.0.0",
   "description": "Small router module that creates http server and runs callbacks that have have been added for a route via the api",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/node": "^12.0.4",
     "istanbul": "^0.4.5",
-    "mocha": "^6.1.4",
+    "mocha": "^10.2.0",
     "prettier": "^2.7.1",
     "should": "^8.2.2"
   },
